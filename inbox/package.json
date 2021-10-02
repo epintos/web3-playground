@@ -1,7 +1,7 @@
 {
   "name": "inbox",
   "version": "1.0.0",
-  "description": "Solidity test projects",
+  "description": "Inbox Smart Contract",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
