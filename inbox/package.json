@@ -1,14 +1,15 @@
 {
   "name": "inbox",
   "version": "1.0.0",
-  "description": "",
+  "description": "Solidity test projects",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "epintos",
+  "license": "MIT",
   "dependencies": {
+    "dotenv": "^10.0.0",
     "ganache-cli": "^6.12.2",
     "mocha": "^9.1.2",
     "solc": "^0.4.17",
