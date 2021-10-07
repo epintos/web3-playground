@@ -23,6 +23,7 @@ const deploy  = async () => {
     // Using Wei unit
     .send({ gas: '1000000', gasPrice: '5000000000', from: accounts[0] });
 
+  console.log('Interface:', interface);
   console.log('Contract deployed to:', result.options.address);
 };
 
