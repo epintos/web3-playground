@@ -7,7 +7,6 @@ npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
 npx hardhat test
-npx hardhat node
 npx hardhat help
 ```
 
@@ -15,4 +14,16 @@ You can run the contract by executing:
 
 ```shell
 npx hardhat run scripts/run.js
+```
+
+You can run a new local blockchain (no blocks) that stays alive by executing:
+
+```shell
+npx hardhat node
+```
+
+then you can deploy the contract by running the following from the root of the project:
+
+```shell
+npx hardhat run scripts/deploy.js --network localhost
 ```
