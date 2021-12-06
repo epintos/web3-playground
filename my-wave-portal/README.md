@@ -10,3 +10,9 @@ npx hardhat test
 npx hardhat node
 npx hardhat help
 ```
+
+You can run the contract by executing:
+
+```shell
+npx hardhat run scripts/run.js
+```
