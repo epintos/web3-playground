@@ -24,5 +24,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 				url: process.env.ALCHEMY_API_URL,
 				accounts: [process.env.RINKEBY_ACCOUNT_KEY], // Private key from Metamask. We need it to deploy the contract
 			},
+			// mainnet: {
+			// 	chainId: 1,
+			// 	url: process.env.PROD_ALCHEMY_API_URL,
+			// 	accounts: [process.env.PRIVATE_KEY],
+			// },
 		},
   };

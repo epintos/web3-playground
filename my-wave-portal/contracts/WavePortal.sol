@@ -16,6 +16,7 @@ contract WavePortal {
      * Blockchain keeps event parameters in transaction logsEvents can be filtered by name and by contract address
      * All information in the blockchain is public and any actions can be found by looking into the transactions close
      * enough but events are a shortcut to ease the development of outside systems in cooperation with smart contracts.
+     * At a basic level, events are messages our smart contracts throw out that we can capture on our client in real-time.
      */
     event NewWave(address indexed from, uint256 timestamp, string message);
 
@@ -27,6 +28,9 @@ contract WavePortal {
 
     Wave[] waves;
 
+    // Stores the address with the last time the user waved, to avoid spams.
+    mapping(address => uint256) public lastWavedAt;
+
     constructor() payable {
       console.log("Yo yo, I am a contract and I am smart");
 
@@ -34,6 +38,13 @@ contract WavePortal {
     }
 
     function wave(string memory _message) public {
+      require(
+        lastWavedAt[msg.sender] + 30 seconds < block.timestamp,
+        "Must wait 30 seconds before waving again."
+      );
+
+      lastWavedAt[msg.sender] = block.timestamp;
+
       totalWaves += 1;
       console.log("%s has waved!", msg.sender);
 
