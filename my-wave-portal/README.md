@@ -27,3 +27,7 @@ then you can deploy the contract by running the following from the root of the p
 ```shell
 npx hardhat run scripts/deploy.js --network localhost
 ```
+
+## Web
+
+The web is built in React using [Replit](https://replit.com/) to build and deploy fast without any local environment. You can find the source code [here](./web)
