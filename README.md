@@ -7,6 +7,7 @@ Some of those projects were created by following different courses online.
 Some of those courses I recommend are:
 
 - https://www.udemy.com/course/ethereum-and-solidity-the-complete-developers-guide/
+- https://buildspace.so/
 
 ## Projects Guide
 
@@ -14,3 +15,5 @@ Some of those courses I recommend are:
 - [Lottery](./lottery) Lottery solidity contract
 - [Lottery UI](./lottery-react) React UI for the lottery contract
 - [Kickstart](./kickstart) Crowdfunding project using solidity and React
+- [MyWavePortal](./my-wave-portal) Solidity and React project where you send a wave, a message and you can earn ETH
+- [EpicNFTs](./epic-nfts) Solidity and React project to mint a random NFT on chain.
