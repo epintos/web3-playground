@@ -1,39 +1,75 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
-// We first import some OpenZeppelin Contracts.
+// We need some util functions for strings.
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
-// We inherit the contract we imported. This means we'll have access
-// to the inherited contract's methods.
+
 contract MyEpicNFT is ERC721URIStorage {
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
 
-  // We need to pass the name of our NFTs token and it's symbol.
-  constructor() ERC721 ("KoalaNFT", "KOALA") {
+  // This is our SVG code. All we need to change is the word that's displayed. Everything else stays the same.
+  // So, we make a baseSvg variable here that all our NFTs can use.
+  string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
+
+  // I create three arrays, each with their own theme of random words.
+  // Pick some random funny words, names of anime characters, foods you like, whatever! 
+  string[] firstWords = ["Mixture", "Isolation", "Combination", "Acquisition", "Withdrawal", "Sword"];
+  string[] secondWords = ["Hammer", "Load", "Development", "Celebration", "Correspond", "State"];
+  string[] thirdWords = ["Gear", "Cupboard", "Suburb", "Canvas", "Destruction", "Thaw"];
+
+  constructor() ERC721 ("SquareNFT", "SQUARE") {
     console.log("This is my NFT contract. Woah!");
   }
 
-  // A function our user will hit to get their NFT.
+  // I create a function to randomly pick a word from each array.
+  function pickRandomFirstWord(uint256 tokenId) public view returns (string memory) {
+    // I seed the random generator. More on this in the lesson. 
+    uint256 rand = random(string(abi.encodePacked("FIRST_WORD", Strings.toString(tokenId))));
+    // Squash the # between 0 and the length of the array to avoid going out of bounds.
+    rand = rand % firstWords.length;
+    return firstWords[rand];
+  }
+
+  function pickRandomSecondWord(uint256 tokenId) public view returns (string memory) {
+    uint256 rand = random(string(abi.encodePacked("SECOND_WORD", Strings.toString(tokenId))));
+    rand = rand % secondWords.length;
+    return secondWords[rand];
+  }
+
+  function pickRandomThirdWord(uint256 tokenId) public view returns (string memory) {
+    uint256 rand = random(string(abi.encodePacked("THIRD_WORD", Strings.toString(tokenId))));
+    rand = rand % thirdWords.length;
+    return thirdWords[rand];
+  }
+
+  function random(string memory input) internal pure returns (uint256) {
+      return uint256(keccak256(abi.encodePacked(input)));
+  }
+
   function makeAnEpicNFT() public {
-     // Get the current tokenId, this starts at 0.
     uint256 newItemId = _tokenIds.current();
 
-     // Actually mint the NFT to the sender using msg.sender.
+    // We go and randomly grab one word from each of the three arrays.
+    string memory first = pickRandomFirstWord(newItemId);
+    string memory second = pickRandomSecondWord(newItemId);
+    string memory third = pickRandomThirdWord(newItemId);
+
+    // I concatenate it all together, and then close the <text> and <svg> tags.
+    string memory finalSvg = string(abi.encodePacked(baseSvg, first, second, third, "</text></svg>"));
+    console.log("\n--------------------");
+    console.log(finalSvg);
+    console.log("--------------------\n");
+
     _safeMint(msg.sender, newItemId);
-
-    // Set the NFTs data.
-    // Json includes the image encoded as Base 64 and then we encode the json to Base64
-    _setTokenURI(
-      newItemId, 
-      'data:application/json;base64,ewogICJuYW1lIjoiQmx1c2hpbmcgS29hbGEiLAogICJkZXNjcmlwdGlvbiI6IkEgdW5pcXVlIGJsdXNoaW5nIEtvYWxhIiwKICAiaW1hZ2UiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBEOTRiV3dnZG1WeWMybHZiajBpTVM0d0lpQnpkR0Z1WkdGc2IyNWxQU0p1YnlJL1BnbzhJVVJQUTFSWlVFVWdjM1puSUZCVlFreEpReUFpTFM4dlZ6TkRMeTlFVkVRZ1UxWkhJREl3TURFd09UQTBMeTlGVGlJS0lDSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OVVVaTh5TURBeEwxSkZReTFUVmtjdE1qQXdNVEE1TURRdlJGUkVMM04yWnpFd0xtUjBaQ0krQ2p4emRtY2dkbVZ5YzJsdmJqMGlNUzR3SWlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpQ2lCM2FXUjBhRDBpTlRFeUxqQXdNREF3TUhCMElpQm9aV2xuYUhROUlqTTROQzR3TURBd01EQndkQ0lnZG1sbGQwSnZlRDBpTUNBd0lEVXhNaTR3TURBd01EQWdNemcwTGpBd01EQXdNQ0lLSUhCeVpYTmxjblpsUVhOd1pXTjBVbUYwYVc4OUluaE5hV1JaVFdsa0lHMWxaWFFpUGdvS1BHY2dkSEpoYm5ObWIzSnRQU0owY21GdWMyeGhkR1VvTUM0d01EQXdNREFzTXpnMExqQXdNREF3TUNrZ2MyTmhiR1VvTUM0eE1EQXdNREFzTFRBdU1UQXdNREF3S1NJS1ptbHNiRDBpSXpBd01EQXdNQ0lnYzNSeWIydGxQU0p1YjI1bElqNEtQSEJoZEdnZ1pEMGlUVFk0TlNBek1qQXpJR010TXpVZ0xUY2dMVGsxSUMwek5pQXRPVFVnTFRRMUlEQWdMVFVnTVRJZ0xUSTJJREkySUMwME9DQXhOU0F0TWpJZ01qVWdMVFF5Q2pJeklDMDBNeUF0TWlBdE1pQXRNemdnTFRFMklDMDNPU0F0TXpJZ0xURTFPQ0F0TlRrZ0xUSTNNQ0F0TVRNeklDMHlOekFnTFRFM05pQXdJQzB4TnlBNElDMHhPU0EyTUFvdE1Ua2dNek1nTUNBMk1DQXRNaUEyTUNBdE5TQXdJQzB6SUMweU9DQXRNemtnTFRZeUlDMDNPU0F0TVRZM0lDMHhPVFlnTFRJd01DQXRNekkySUMweE16TWdMVFV6TVNBMU5Bb3RNVFkzSURFNE5pQXRNemc0SURJMk15QXRORFEwSURnd0lDMDFOaUF5TXpJZ0xURXdNU0F6TkRjZ0xURXdNU0JzTlRVZ01DQXdJQzAxTWlCak1DQXRNamtnTlNBdE9ERWdNVEFLTFRFeE5TQTFOU0F0TXpNMklESTNNeUF0TlRNeklEYzNNaUF0TmprNElETXdOaUF0TVRBeElEVTFOaUF0TVRNNUlEa3hNeUF0TVRNNElETXlOaUF3SURRME1DQXlNU0EzTnpVS01UUXpJRFF5TkNBeE5UTWdOakl4SURNeE9TQTNNRFlnTlRreklESXhJRFk0SURFd0lEWTJJREl3TUNBek1TQXhPRGtnTFRNMklESTFNaUF0TXpJZ016STVJREl3SURFMU9Bb3hNRFFnTXpVM0lETTFNaUEwTWpJZ05USTFJRFV3SURFek15QXhOeUF5T0RNZ0xURXdNaUEwTmpFZ0xUUTNJRGN3SUMwMU1TQTRNQ0F0TXpJZ056WWdOek1nTFRFMUlERXdOUW90TVRVZ01URXdJQzB5SURFMUlEUXdJQzA1T1NBeE5EUWdMVEl6TnlBeU1UY2diQzA0TmlBME5TQXpNQ0F6TlNCak5EQWdORGNnTXpnZ05qVWdMVEV4SURnNUlDMDVOaUEwT1FvdE16RTBJRFkwSUMwMU16SWdNelVnTFRJME1TQXRNeklnTFRNeE9TQXROemtnTFRRME55QXRNamN6SUd3dE1UVWdMVEl6SUMweE1UVWdOVFVnWXkweE9UUWdPVE1nTFRNME1nb3hNeklnTFRVME1DQXhORElnTFRVNElETWdMVEV5T1NBeE1pQXRNVFU0SURJeElDMHpNQ0E1SUMwM01DQXhNeUF0T1RBZ01UQWdMVE0xSUMwMklDMHpOU0F0TlNBeE9TQXlNd28zTUNBek5pQTROU0ExTXlBMk5DQTNNQ0F0TWpNZ01Ua2dMVEUyT0NBMklDMHlNellnTFRJeElDMDVOeUF0TXpnZ0xURXhNU0F0TkRFZ0xUTXpOQ0F0TkRrZ0xUTXdOaUF0TVRJS0xUVXdNeUF0TXprZ0xUWTBPU0F0T0RnZ2JDMDFOaUF0TVRrZ0xUSTFJRFUxSUdNdE16Y2dPREVnTFRFeE1DQXhOemdnTFRFMU9DQXlNVEFnTFRneklEVTJJQzB5TkRRZ01UQTNDaTAwTWpjZ01UTTNJQzA0T0NBeE5DQXRNalE0SURFNElDMHlPVFVnT0hvZ2JUazVNU0F0TVRjeE5DQmpNVEFnTFRFM0lDMHhNeUF0TXpZZ0xUSTNJQzB5TWlBdE1USWdNVElLTFRRZ016TWdNVEVnTXpNZ05TQXdJREV5SUMwMUlERTJJQzB4TVhvZ2JURTJOVFFnTFRRMElHTXdJQzA0SUMwM0lDMHhOU0F0TVRVZ0xURTFJQzA0SURBZ0xURTFJRGNnTFRFMUNqRTFJREFnT0NBM0lERTFJREUxSURFMUlEZ2dNQ0F4TlNBdE55QXhOU0F0TVRWNklHMHROekl3SUMwME5UVWdZekFnTFRNM0lDMHlOU0F0TVRBd0lDMHpPU0F0TVRBd0lDMHhOUW93SUMweE15QXhNU0EwSURNMElEZ2dNVEVnTVRVZ016Y2dNVFVnTlRnZ01DQXlNU0ExSURNNElERXdJRE00SURZZ01DQXhNQ0F0TVRRZ01UQWdMVE13ZWlJdlBnbzhMMmMrQ2p3dmMzWm5QZ289Igp9'
-    );
-
-    console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
-
-    // Increment the counter for when the next NFT is minted.
+  
+    // We'll be setting the tokenURI later!
+    _setTokenURI(newItemId, "blah");
+  
     _tokenIds.increment();
+    console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
   }
 }
