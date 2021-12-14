@@ -39,6 +39,16 @@ contract DiabloNFTGame is ERC721 {
   // We create a mapping from the nft's tokenId => that NFTs attributes.
   mapping(uint256 => CharacterAttributes) public nftHolderAttributes;
 
+  struct DiabloBoss {
+    string name;
+    string imageURI;
+    uint hp;
+    uint maxHp;
+    uint attackDamage;
+  }
+
+  DiabloBoss public diabloBoss;
+
   // A mapping from an address => the NFTs tokenId. Gives me an easy way
   // to store the owner of the NFT and reference it later.
   mapping(address => uint256) public nftHolders;
@@ -49,10 +59,26 @@ contract DiabloNFTGame is ERC721 {
     string[] memory characterNames,
     string[] memory characterImageURIs,
     uint[] memory characterHp,
-    uint[] memory characterAttackDmg
+    uint[] memory characterAttackDmg,
+    string memory bossName, // These new variables would be passed in via run.js or deploy.js.
+    string memory bossImageURI,
+    uint bossHp,
+    uint bossAttackDamage
   )
     ERC721("Diablo", "DIABLO")
   {
+    // Initialize the boss. Save it to our global "bigBoss" state variable.
+    diabloBoss = DiabloBoss({
+      name: bossName,
+      imageURI: bossImageURI,
+      hp: bossHp,
+      maxHp: bossHp,
+      attackDamage: bossAttackDamage
+    });
+
+    console.log("Done initializing boss %s w/ HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+
+
     // Loop through all the characters, and save their values in our contract so
     // we can use them later when we mint our NFTs.
     for(uint i = 0; i < characterNames.length; i += 1) {
