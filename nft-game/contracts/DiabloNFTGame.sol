@@ -67,7 +67,7 @@ contract DiabloNFTGame is ERC721 {
   )
     ERC721("Diablo", "DIABLO")
   {
-    // Initialize the boss. Save it to our global "bigBoss" state variable.
+    // Initialize the boss. Save it to our global "diabloBoss" state variable.
     diabloBoss = DiabloBoss({
       name: bossName,
       imageURI: bossImageURI,
@@ -76,7 +76,7 @@ contract DiabloNFTGame is ERC721 {
       attackDamage: bossAttackDamage
     });
 
-    console.log("Done initializing boss %s w/ HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+    console.log("Done initializing boss %s w/ HP %s, img %s", diabloBoss.name, diabloBoss.hp, diabloBoss.imageURI);
 
 
     // Loop through all the characters, and save their values in our contract so
@@ -130,6 +130,8 @@ contract DiabloNFTGame is ERC721 {
     _tokenIds.increment();
   }
 
+  // This function is called by OpenSea, etc. to get the NFT data
+  // This is how we can dinamically modified the NFT data.
   function tokenURI(uint256 _tokenId) public view override returns (string memory) {
     CharacterAttributes memory charAttributes = nftHolderAttributes[_tokenId];
 
@@ -159,5 +161,45 @@ contract DiabloNFTGame is ERC721 {
     );
     
     return output;
+  }
+
+  function attackBoss() public {
+    // Get the state of the player's NFT.
+    uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
+    
+    // Using storage type to modify the original array
+    CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
+    console.log("\nPlayer w/ character %s about to attack. Has %s HP and %s AD", player.name, player.hp, player.attackDamage);
+    console.log("Boss %s has %s HP and %s AD", diabloBoss.name, diabloBoss.hp, diabloBoss.attackDamage);
+
+    // Make sure the player has more than 0 HP.
+    require (
+      player.hp > 0,
+      "Error: character must have HP to attack boss."
+    );
+
+    // Make sure the boss has more than 0 HP.
+    require (
+      diabloBoss.hp > 0,
+      "Error: boss must have HP to attack boss."
+    );
+
+    // Allow player to attack boss.
+    if (diabloBoss.hp < player.attackDamage) {
+      diabloBoss.hp = 0;
+    } else {
+      diabloBoss.hp = diabloBoss.hp - player.attackDamage;
+    }
+
+     // Allow boss to attack player.
+    if (player.hp < diabloBoss.attackDamage) {
+      player.hp = 0;
+    } else {
+      player.hp = player.hp - diabloBoss.attackDamage;
+    }
+    
+    // Console for ease.
+    console.log("Player attacked boss. New boss hp: %s", diabloBoss.hp);
+    console.log("Boss attacked player. New player hp: %s\n", player.hp);
   }
 }

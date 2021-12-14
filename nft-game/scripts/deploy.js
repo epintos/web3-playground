@@ -6,31 +6,29 @@ const main = async () => {
     "https://www.dexerto.com/wp-content/uploads/2021/08/12/diablo-2-sorceress-guide.jpeg", 
     "https://www.pcgamesn.com/wp-content/uploads/2021/09/diablo-2-resurrected-paladin-builds-best.jpg"],
     [100, 220, 150],                    // HP values
-    [200, 80, 150]                       // Attack damage values
+    [200, 80, 150],                      // Attack damage values
+    "Diablo", // Boss name
+    "https://i.pinimg.com/originals/d9/39/60/d93960240fc228610a5d242dd112795f.jpg", // Boss image
+    10000, // Boss hp
+    50 // Boss attack damage
   );
 
   await gameContract.deployed();
   console.log("Contract deployed to:", gameContract.address);
-  
+
   let txn;
-  txn = await gameContract.mintCharacterNFT(0);
-  await txn.wait();
-  console.log("Minted NFT #1");
-
-  txn = await gameContract.mintCharacterNFT(1);
-  await txn.wait();
-  console.log("Minted NFT #2");
-
+  // We only have three characters.
+  // an NFT w/ the character at index 2 of our array.
   txn = await gameContract.mintCharacterNFT(2);
   await txn.wait();
-  console.log("Minted NFT #3");
 
-  txn = await gameContract.mintCharacterNFT(1);
+  txn = await gameContract.attackBoss();
   await txn.wait();
-  console.log("Minted NFT #4");
 
-  console.log("Done deploying and minting!");
+  txn = await gameContract.attackBoss();
+  await txn.wait();
 
+  console.log("Done!");
 };
 
 const runMain = async () => {
