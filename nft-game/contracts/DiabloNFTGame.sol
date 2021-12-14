@@ -26,6 +26,9 @@ contract DiabloNFTGame is ERC721 {
     uint attackDamage;
   }
 
+  event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+  event AttackComplete(uint newBossHp, uint newPlayerHp);
+
   // The tokenId is the NFTs unique identifier, it's just a number that goes
   // 0, 1, 2, 3, etc.
   using Counters for Counters.Counter;
@@ -96,9 +99,10 @@ contract DiabloNFTGame is ERC721 {
       // Hardhat's use of console.log() allows up to 4 parameters in any order of following types: uint, string, bool, address
       console.log("Done initializing %s w/ HP %s, img %s", c.name, c.hp, c.imageURI);
 
-    // I increment tokenIds here so that my first NFT has an ID of 1.
     }
     
+    // I increment tokenIds here so that my first NFT has an ID of 1.
+    // We will use the 0 to validate if a certain user has a token or not
     _tokenIds.increment();
   }
 
@@ -128,6 +132,8 @@ contract DiabloNFTGame is ERC721 {
 
     // Increment the tokenId for the next person that uses it.
     _tokenIds.increment();
+
+    emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
   }
 
   // This function is called by OpenSea, etc. to get the NFT data
@@ -201,5 +207,29 @@ contract DiabloNFTGame is ERC721 {
     // Console for ease.
     console.log("Player attacked boss. New boss hp: %s", diabloBoss.hp);
     console.log("Boss attacked player. New player hp: %s\n", player.hp);
+
+    emit AttackComplete(diabloBoss.hp, player.hp);
+  }
+
+  function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
+    // Get the tokenId of the user's character NFT
+    uint256 userNftTokenId = nftHolders[msg.sender];
+    // If the user has a tokenId in the map, return their character.
+    if (userNftTokenId > 0) {
+      return nftHolderAttributes[userNftTokenId];
+    }
+    // Else, return an empty character.
+    else {
+      CharacterAttributes memory emptyStruct;
+      return emptyStruct;
+    }
+  }
+
+  function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+    return defaultCharacters;
+  }
+
+  function getDiabloBoss() public view returns (DiabloBoss memory) {
+    return diabloBoss;
   }
 }
