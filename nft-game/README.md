@@ -1,15 +1,33 @@
-# Basic Sample Hardhat Project
+# Diablo NFTs game
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
-
-Try running some of the following tasks:
+This project uses Hardhat to simulate a local ethereum blockchain. Hardhat comes with the following commands:
 
 ```shell
 npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
 npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
 npx hardhat help
 ```
+
+You can run the contract by executing:
+
+```shell
+npx hardhat run scripts/run.js
+```
+
+You can run a new local blockchain (no blocks) that stays alive by executing:
+
+```shell
+npx hardhat node
+```
+
+then you can deploy the contract by running the following from the root of the project:
+
+```shell
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+## Web
+
+The web is built in React using [Replit](https://replit.com/) to build and deploy fast without any local environment. You can find the source code [here](./web) and the working project [here](https://nft-game-starter-project.epintos.repl.co/)
