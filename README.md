@@ -18,3 +18,4 @@ Some of those courses I recommend are:
 - [MyWavePortal](./my-wave-portal) Solidity and React project where you send a wave, a message and you can earn ETH
 - [EpicNFTs](./epic-nfts) Solidity and React project to mint a random NFT on chain.
 - [DiabloNFTGame](./nft-game) Solidity and React project to play a Diablo 2 battle with NFTs
+- [SolanaGifsPortal](./solana-gifs-portal) Gifs Portal using Solana blochain and Anchor
