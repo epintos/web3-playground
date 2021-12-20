@@ -19,3 +19,4 @@ Some of those courses I recommend are:
 - [EpicNFTs](./epic-nfts) Solidity and React project to mint a random NFT on chain.
 - [DiabloNFTGame](./nft-game) Solidity and React project to play a Diablo 2 battle with NFTs
 - [SolanaGifsPortal](./solana-gifs-portal) Gifs Portal using Solana blochain and Anchor
+- [AmsterdamDAO](./amsterdam-dao) Implementation of a DAO, NFT membership and a token using [ThirdWeb](https://thirdweb.com/)
